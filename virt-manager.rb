@@ -3,7 +3,7 @@ class VirtManager < Formula
 
   desc "App for managing virtual machines"
   homepage "https://virt-manager.org/"
-  url "https://releases.pagure.org/virt-manager/virt-manager-3.2.0.tar.gz"
+  url "https://virt-manager.org/download/sources/virt-manager/virt-manager-3.2.0.tar.gz"
   sha256 "2b6fe3d90d89e1130227e4b05c51e6642d89c839d3ea063e0e29475fd9bf7b86"
   revision 3
 
@@ -22,6 +22,7 @@ class VirtManager < Formula
   depends_on "osinfo-db"
   depends_on "py3cairo"
   depends_on "pygobject3"
+  depends_on "docutils"
   depends_on "python"
   depends_on "spice-gtk"
   depends_on "vte3"
