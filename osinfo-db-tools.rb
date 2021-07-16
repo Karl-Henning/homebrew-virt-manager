@@ -5,6 +5,8 @@ class OsinfoDbTools < Formula
   sha256 "255f1c878bacec70c3020ff5a9cb0f6bd861ca0009f24608df5ef6f62d5243c0"
 
   depends_on "pkg-config" => :build
+  depends_on "meson" => :build
+  depends_on "ninja" => :build
 
   depends_on "gettext"
   depends_on "glib"
@@ -14,17 +16,18 @@ class OsinfoDbTools < Formula
 
   def install
     args = %W[
-      --disable-dependency-tracking
-      --disable-silent-rules
       --prefix=#{prefix}
       --localstatedir=#{var}
       --sysconfdir=#{etc}
     ]
-    system "./configure", *args
-    system "make", "install"
+
+    system "meson", "setup", "builddir",  *args
+    system "ninja", "-C", "builddir"
+    system "ninja", "-C", "builddir", "install"
   end
 
   test do
     system "#{bin}/osinfo-db-path"
   end
 end
+
