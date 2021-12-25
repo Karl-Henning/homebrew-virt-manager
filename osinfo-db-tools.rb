@@ -30,3 +30,4 @@ class OsinfoDbTools < Formula
     system "#{bin}/osinfo-db-path"
   end
 end
+
