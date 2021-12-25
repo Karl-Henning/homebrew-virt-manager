@@ -1,51 +1,37 @@
 class VirtViewer < Formula
   desc "App for virtualized guest interaction"
   homepage "https://virt-manager.org/"
-  url "https://virt-manager.org/download/sources/virt-viewer/virt-viewer-11.0.tar.xz"
-  sha256 "a43fa2325c4c1c77a5c8c98065ac30ef0511a21ac98e590f22340869bad9abd0"
+  url "https://virt-manager.org/download/sources/virt-viewer/virt-viewer-10.0.tar.xz"
+  sha256 "d23bc0a06e4027c37b8386cfd0286ef37bd738977153740ab1b6b331192389c5"
+  revision 3
 
-  depends_on "intltool" => :build
-  depends_on "libtool" => :build
+  depends_on "gettext" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
 
-  depends_on "atk"
-  depends_on "cairo"
-  depends_on "gdk-pixbuf"
-  depends_on "gettext"
+  depends_on "desktop-file-utils"
   depends_on "glib"
-  depends_on "gtk+3"
   depends_on "gtk-vnc"
-  depends_on "hicolor-icon-theme"
-  depends_on "libvirt"
+  depends_on "gtk+3"
   depends_on "libvirt-glib"
-  depends_on "pango"
   depends_on "shared-mime-info"
   depends_on "spice-gtk"
-  depends_on "spice-protocol"
+
+  patch :DATA
 
   def install
-    mkdir "build" do
-      system "meson", *std_meson_args,
-        "-Dlibvirt=enabled",
-        "-Dspice=enabled",
-        "-Dvnc=enabled",
-        ".."
-      system "ninja", "-v"
-      system "ninja", "install", "-v"
-      (share/"mime").rmtree
-    end
+    system "meson", "setup", "builddir", *std_meson_args
+    system "ninja", "-C", "builddir", "install", "-v"
   end
 
   def post_install
-    # manual update of mime database
-    system "#{Formula["shared-mime-info"].opt_bin}/update-mime-database", "#{HOMEBREW_PREFIX}/share/mime"
-    # manual icon cache update step
-    system "#{Formula["gtk+3"].opt_bin}/gtk3-update-icon-cache", "#{HOMEBREW_PREFIX}/share/icons/hicolor"
+    system Formula["shared-mime-info"].opt_bin/"update-mime-database", HOMEBREW_PREFIX/"share/mime"
+    system Formula["gtk+3"].opt_bin/"gtk3-update-icon-cache", HOMEBREW_PREFIX/"share/icons/hicolor"
+    system Formula["desktop-file-utils"].opt_bin/"update-desktop-database", HOMEBREW_PREFIX/"share/applications"
   end
 
   test do
-    system "#{bin}/virt-viewer", "--version"
+    system bin/"virt-viewer", "--version"
   end
 end
