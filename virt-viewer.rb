@@ -25,7 +25,6 @@ class VirtViewer < Formula
 
   def install
     args = %W[
-      --disable-silent-rules
       --disable-update-mimedb
       --with-gtk-vnc
       --with-spice-gtk
