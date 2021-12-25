@@ -6,6 +6,8 @@ class VirtViewer < Formula
 
   depends_on "intltool" => :build
   depends_on "libtool" => :build
+  depends_on "meson" => :build
+  depends_on "ninja" => :build
   depends_on "pkg-config" => :build
 
   depends_on "atk"
@@ -24,14 +26,16 @@ class VirtViewer < Formula
   depends_on "spice-protocol"
 
   def install
-    args = %W[
-      --disable-update-mimedb
-      --with-gtk-vnc
-      --with-spice-gtk
-      --prefix=#{prefix}
-    ]
-    system "./configure", *args
-    system "make", "install"
+    mkdir "build" do
+      system "meson", *std_meson_args,
+        "-Dlibvirt=enabled",
+        "-Dspice=enabled",
+        "-Dvnc=enabled",
+        ".."
+      system "ninja", "-v"
+      system "ninja", "install", "-v"
+      (share/"mime").rmtree
+    end
   end
 
   def post_install
